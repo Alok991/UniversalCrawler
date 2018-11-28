@@ -14,16 +14,12 @@ def get_tag_data(tag, position_in_page):
 
 
 def get_img_data(position_in_page):
-    # TODO
-    # We still have to do position_in_page.find("img") and then process
-    print("TODO img data")
-    pass
+    position_in_page = position_in_page.find("img")
+    print(position_in_page["src"])
 
 def get_span_data(position_in_page):
-    # TODO
-    print("TODO span data")
-    pass
-
+    position_in_page = position_in_page.find_all("span")
+    print(", ".join(map(lambda x: x.text, position_in_page)))
 
 def get_data(current_structure, position_in_page):
 
