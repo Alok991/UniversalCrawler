@@ -1,8 +1,12 @@
 import requests
 from bs4 import BeautifulSoup as soup
 from config import structure
+import pandas as pd
 
 WEBSITE = "https://amazon.in"
+
+img_list = []
+price_list = []
 
 
 
@@ -14,12 +18,17 @@ def get_tag_data(tag, position_in_page):
 
 
 def get_img_data(position_in_page):
+    global img_list
     position_in_page = position_in_page.find("img")
-    print(position_in_page["src"])
+    img_list.append(position_in_page['src'])
+
+def get_df(img_list, price_list):
+    return pd.DataFrame({"image_links": img_list, "prices": price_list+["NA"]*(len(img_list)-len(price_list))})
 
 def get_span_data(position_in_page):
+    global price_list
     position_in_page = position_in_page.find_all("span")
-    print(", ".join(map(lambda x: x.text, position_in_page)))
+    price_list.append(", ".join(map(lambda x: x.text, position_in_page)))
 
 def get_data(current_structure, position_in_page):
 
@@ -43,9 +52,9 @@ def get_data(current_structure, position_in_page):
                     get_data(child_i, position_in_page)
 
 
-        
-
 if __name__ == "__main__":
     page = requests.get(WEBSITE)
     page = soup(page.content, 'html.parser')
     get_data(structure, page)
+    df = get_df(img_list, price_list)
+    print(df)
